@@ -9,3 +9,8 @@ Download PDF version of Official RedHat Documentation from CLI
 	./docsync.sh -d all                         Download documentation for all products
 	./docsync.sh -d red_hat_enterprise_linux    Download documentation for <red_hat_enterprise_linux>  
 ```
+
+
+Works on 2025-05-19
+
+*Keep in mind that the script may break if Redhat restructures their documentation portal at some point.*
