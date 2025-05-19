@@ -4,6 +4,22 @@
 website=https://docs.redhat.com/
 docdir="."
 
+function toolCheck {
+        tools=(curl grep sed sort uniq awk xmllint wget)
+        for i in ${tools[@]}
+        do
+                $i --help &> /dev/null
+                if [ $? -eq 127 ]; then
+                        echo "Tool $i not available. Aborting."
+                        exit 6
+                fi
+
+        done
+
+}
+
+toolCheck
+
 
 function listProducts {
 
