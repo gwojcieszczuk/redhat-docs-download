@@ -6,7 +6,7 @@ docdir="."
 ostype="$(uname -s)"
 
 function toolCheck {
-        tools=(curl grep sed sort uniq awk xmllint wget)
+        tools=(curl grep sed sort uniq awk xmllint)
         for i in ${tools[@]}
         do
                 $i --help &> /dev/null
@@ -92,8 +92,8 @@ function downloadDocs {
 				filename="$thisdocdir/${product}-${i}-$(basename $a).pdf"
 				echo -en "  * Downloading $(basename $filename): "
 				if [ ! -f "$filename" ]; then
-			     		wget $website/en$a -O "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
-						#curl $website/en$a --output "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
+			     		#wget $website/en$a -O "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
+						curl $website/en$a/index --output "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
 
 			     		if [ $? -eq 0 ]; then
 				     		echo -en "OK\n"
