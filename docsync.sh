@@ -1,11 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 website=https://docs.redhat.com/
 docdir="."
+ostype="$(uname -s)"
 
 function toolCheck {
-        tools=(curl grep sed sort uniq awk xmllint wget)
+        tools=(curl grep sed sort uniq awk xmllint)
         for i in ${tools[@]}
         do
                 $i --help &> /dev/null
@@ -91,13 +92,19 @@ function downloadDocs {
 				filename="$thisdocdir/${product}-${i}-$(basename $a).pdf"
 				echo -en "  * Downloading $(basename $filename): "
 				if [ ! -f "$filename" ]; then
-			     		wget $website/en$a -O "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
+			     		#wget $website/en$a -O "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
+						curl $website/en$a --output "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
+
 			     		if [ $? -eq 0 ]; then
 				     		echo -en "OK\n"
 					else
 						echo -en "FAILED\n"
 			     		fi
-			     		stat -c %b "$filename" | grep -w 0 &> /dev/null
+			     		if [ "$ostype" == "Darwin" ]; then
+						   stat -f %b "$filename" | grep -w 0 &> /dev/null
+						else
+						   stat -c %b "$filename" | grep -w 0 &> /dev/null
+						fi
 			     		if [ $? -eq 0 ]; then
 				     		rm -f "$filename"
 			     		fi
@@ -145,6 +152,9 @@ do
 			;;
 		h)
 			getHelp
+			;;
+		*)
+		    getHelp
 			;;
 	esac
 done
