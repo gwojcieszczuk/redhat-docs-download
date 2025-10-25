@@ -11,6 +11,6 @@ Documents are downloaded to current/working directory.
 ```
 
 
-Works on 2025-05-19
+Still works: 2025-10-25
 
 *Keep in mind that the script may break if Redhat restructures their documentation portal at some point.*
