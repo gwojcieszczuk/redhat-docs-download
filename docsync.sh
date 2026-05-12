@@ -94,8 +94,8 @@ function downloadDocs {
 			fi
 			urls=($(curl $website/en/documentation/$product/$i 2> /dev/null grep href | \
 				grep documentation | sed 's@\\r\\n@,@g' | tr ',' '\n' | \
-				sed 's@^"@@' | grep '^/documentation'  | sed 's@\*.*@@'  | \
-				grep -w html | sed 's@html@pdf@' | sed 's@"$@@'))
+				sed 's@^"@@' | grep "^/documentation/$product/$i/"  | sed 's@\*.*@@'  | \
+				grep -w html | sed 's@html@pdf@' | sed 's@"$@@' | grep -v '/index[/]*$'))
 			for a in ${urls[@]}
 			do
 				thisdocdir=$docdir/$product/$i
@@ -110,23 +110,27 @@ function downloadDocs {
 				filename="$thisdocdir/${product}-${i}-$(basename $a).pdf"
 				echo -en "  * Downloading $(basename $filename): "
 				if [ ! -f "$filename" ]; then
-			     		#wget $website/en$a -O "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
-						curl $website/en$a/index --output "$thisdocdir"/${product}-${i}-$(basename $a).pdf &> /dev/null
-
-			     		if [ $? -eq 0 ]; then
-				     		echo -en "OK\n"
-					else
-						echo -en "FAILED\n"
-			     		fi
-			     		if [ "$ostype" == "Darwin" ]; then
-						   stat -f %b "$filename" | grep -w 0 &> /dev/null
+						actual_pdf_url=$(curl -s "$website/en$a/index" 2>/dev/null | \
+							grep -o '"[^"]*\.pdf"' | tr -d '"' | head -1)
+						if [ -z "$actual_pdf_url" ]; then
+							echo -en "FAILED (PDF URL not found)\n"
 						else
-						   stat -c %b "$filename" | grep -w 0 &> /dev/null
+							curl "$actual_pdf_url" --output "$filename" &> /dev/null
+							if [ $? -eq 0 ]; then
+								echo -en "OK\n"
+								if [ "$ostype" == "Darwin" ]; then
+									stat -f %b "$filename" | grep -w 0 &> /dev/null
+								else
+									stat -c %b "$filename" | grep -w 0 &> /dev/null
+								fi
+								if [ $? -eq 0 ]; then
+									rm -f "$filename"
+								fi
+							else
+								echo -en "FAILED\n"
+								rm -f "$filename"
+							fi
 						fi
-			     		if [ $? -eq 0 ]; then
-				     		rm -f "$filename"
-			     		fi
-
 				else
 			     		echo -en "already downloaded\n"
 				fi
