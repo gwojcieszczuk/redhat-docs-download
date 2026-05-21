@@ -53,8 +53,13 @@ function listVersions {
 	product=$1
 	link=$(curl $website/en/documentation/$product/ 2> /dev/null | sed 's@.*url=@@' | sed 's@".*@@')
 	curl $website/$link > tmp.html 2> /dev/null
-	versions=($(xmllint --nonet --nowarning --html --nowrap --recover --xpath \
-		'//select[@id="product_version"]/option/text()' tmp.html 2> /dev/null))
+        #versions=($(xmllint --nonet --nowarning --html --nowrap --recover --xpath \
+        #       '//select[@id="product_version"]/option/text()' tmp.html 2> /dev/null))
+        # Looks like some newer versions of xmllint don't support --nowrap option.
+        #
+        versions=($(xmllint --nonet --nowarning --html --recover --xpath \
+                '//select[@id="product_version"]/option/text()' tmp.html 2> /dev/null))
+
 	rm -f tmp.html
 	for i in ${versions[@]}
 	do
