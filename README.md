@@ -6,6 +6,7 @@ Documents are downloaded to current/working directory.
 
 ./docsync.sh -h                             Show this help
 ./docsync.sh -l                             List all products
+./docsync.sh -d red_hat_enterprise_linux -l List versions for <red_hat_enterprise_linux>
 ./docsync.sh -d all                         Download documentation for all products
 ./docsync.sh -d red_hat_enterprise_linux    Download documentation for <red_hat_enterprise_linux>  
 ./docsync.sh -d red_hat_enterprise_linux -v 9    Download documentation for <red_hat_enterprise_linux> version 9 
